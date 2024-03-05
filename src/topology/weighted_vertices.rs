@@ -1,13 +1,13 @@
 use std::{hash::RandomState, mem};
 
-use hashbrown::raw::RawTable;
+use hashbrown::{raw::RawTable, hash_map::DefaultHashBuilder};
 
 use crate::hashbrown_utils::{equivalent_key, make_hasher};
 
 use super::{VertexID, VertexWeight};
 
-pub struct WeightedVertices {
-    hash_builder: RandomState,
+pub struct WeightedVertices<H = DefaultHashBuilder> {
+    hash_builder: H,
     vertices: RawTable<(VertexID, VertexWeight)>,
 }
 
@@ -15,7 +15,7 @@ impl WeightedVertices {
     pub fn new() -> Self {
         WeightedVertices {
             vertices: RawTable::new(),
-            hash_builder: RandomState::new(),
+            hash_builder: DefaultHashBuilder::default(),
         }
     }
 

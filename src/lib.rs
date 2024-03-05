@@ -1,4 +1,4 @@
-use hashbrown::raw::RawTable;
+use hashbrown::{hash_map::DefaultHashBuilder, raw::RawTable};
 use std::hash::Hash;
 use topology::{AdjacencyList, VertexID};
 
@@ -6,9 +6,10 @@ mod hashbrown_utils;
 mod node;
 mod topology;
 
-pub struct Graph<Node> {
+pub struct Graph<Node, H = DefaultHashBuilder> {
     _topology: AdjacencyList,
     nodes: RawTable<(VertexID, Node)>,
+    hash_builder: H,
 }
 
 impl<Node> Graph<Node> {
@@ -16,6 +17,7 @@ impl<Node> Graph<Node> {
         Graph {
             _topology: AdjacencyList::new(),
             nodes: RawTable::new(),
+            hash_builder: DefaultHashBuilder::default(),
         }
     }
 }
