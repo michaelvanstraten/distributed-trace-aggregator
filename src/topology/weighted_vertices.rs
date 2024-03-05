@@ -1,6 +1,6 @@
 use std::{hash::RandomState, mem};
 
-use hashbrown::{raw::RawTable, hash_map::DefaultHashBuilder};
+use hashbrown::{hash_map::DefaultHashBuilder, hash_table, raw::RawTable, HashTable};
 
 use crate::hashbrown_utils::{equivalent_key, make_hasher};
 
@@ -9,7 +9,7 @@ use super::{VertexID, VertexWeight};
 #[derive(Default)]
 pub struct WeightedVertices<H = DefaultHashBuilder> {
     hash_builder: H,
-    vertices: RawTable<(VertexID, VertexWeight)>,
+    vertices: HashTable<(VertexID, VertexWeight)>,
 }
 
 impl WeightedVertices {
@@ -21,21 +21,17 @@ impl WeightedVertices {
         &mut self,
         vertex_id: VertexID,
         vertex_weight: VertexWeight,
-    ) -> Option<(VertexID, VertexWeight)> {
-        match self.vertices.find_or_find_insert_slot(
+    ) -> Option<VertexWeight> {
+        match self.vertices.entry(
             vertex_id,
             equivalent_key(&vertex_id),
             make_hasher(&self.hash_builder),
         ) {
-            Ok(bucket) => Some((
-                vertex_id,
-                mem::replace(unsafe { &mut bucket.as_mut().1 }, vertex_weight),
-            )),
-            Err(slot) => {
-                unsafe {
-                    self.vertices
-                        .insert_in_slot(vertex_id, slot, (vertex_id, vertex_weight));
-                }
+            hash_table::Entry::Occupied(mut occupied_entry) => {
+                Some(mem::replace(&mut occupied_entry.get_mut().1, vertex_weight))
+            }
+            hash_table::Entry::Vacant(vacant_entry) => {
+                vacant_entry.insert((vertex_id, vertex_weight));
                 None
             }
         }
@@ -43,13 +39,13 @@ impl WeightedVertices {
 
     pub fn get_vertex_weigth(&self, vertex_id: VertexID) -> Option<&VertexWeight> {
         self.vertices
-            .get(vertex_id, equivalent_key(&vertex_id))
+            .find(vertex_id, equivalent_key(&vertex_id))
             .map(|(_, vertex_weight)| vertex_weight)
     }
 
     pub fn get_vertex_weigth_mut(&mut self, vertex_id: VertexID) -> Option<&mut VertexWeight> {
         self.vertices
-            .get_mut(vertex_id, equivalent_key(&vertex_id))
+            .find_mut(vertex_id, equivalent_key(&vertex_id))
             .map(|(_, vertex_weight)| vertex_weight)
     }
 
