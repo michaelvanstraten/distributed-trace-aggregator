@@ -1,6 +1,12 @@
 use std::{hash::RandomState, mem};
 
-use hashbrown::{hash_map::DefaultHashBuilder, hash_table, raw::RawTable, HashTable};
+use hashbrown::{
+    hash_map::DefaultHashBuilder,
+    hash_table::{self, Iter},
+    raw::RawTable,
+    HashTable,
+};
+use serde::Serialize;
 
 use crate::hashbrown_utils::{equivalent_key, make_hasher};
 
@@ -55,5 +61,18 @@ impl WeightedVertices {
         } else {
             self.set_vertex_weight(vertex_id, by);
         }
+    }
+}
+
+impl<'a> IntoIterator for &'a WeightedVertices {
+    type Item = (&'a VertexID, &'a VertexWeight);
+    type IntoIter = std::iter::Map<
+        Iter<'a, (VertexID, VertexWeight)>,
+        fn(&(VertexID, VertexWeight)) -> (&VertexID, &VertexWeight),
+    >;
+
+    #[cfg_attr(feature = "inline-more", inline)]
+    fn into_iter(self) -> Self::IntoIter {
+        self.vertices.iter().map(|item| (&item.0, &item.1))
     }
 }

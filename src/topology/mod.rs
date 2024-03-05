@@ -6,3 +6,6 @@ pub use weighted_vertices::WeightedVertices;
 
 pub type VertexID = u64;
 pub type VertexWeight = usize;
+
+#[cfg(feature = "serde")]
+mod serde;
