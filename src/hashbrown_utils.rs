@@ -28,6 +28,7 @@ where
 /// Ensures that a single closure type across uses of this which, in turn prevents multiple
 /// instances of any functions like RawTable::reserve from being generated
 #[cfg_attr(feature = "inline-more", inline)]
+#[allow(unused)]
 pub(crate) fn equivalent<Q, K>(k: &Q) -> impl Fn(&K) -> bool + '_
 where
     Q: ?Sized + Equivalent<K>,
@@ -37,6 +38,7 @@ where
 
 #[cfg(not(feature = "nightly"))]
 #[cfg_attr(feature = "inline-more", inline)]
+#[allow(clippy::manual_hash_one)]
 pub(crate) fn make_hash<Q, S>(hash_builder: &S, val: &Q) -> u64
 where
     Q: Hash + ?Sized,
