@@ -1,6 +1,7 @@
 #![allow(unused)]
 
-use hashbrown::{raw::RawTable, hash_map::DefaultHashBuilder};
+use hashbrown::{hash_map::DefaultHashBuilder, raw::RawTable, HashSet};
+use hashbrown_utils::{make_hash, make_hasher};
 use std::hash::Hash;
 use topology::{AdjacencyList, VertexID};
 
@@ -9,8 +10,8 @@ mod node;
 mod topology;
 
 pub struct Graph<Node, H = DefaultHashBuilder> {
-    _topology: AdjacencyList,
-    nodes: RawTable<(VertexID, Node)>,
+    topology: AdjacencyList,
+    nodes: HashSet<Node>,
     hash_builder: H,
 }
 
@@ -30,9 +31,9 @@ where
 impl<Node> Default for Graph<Node> {
     fn default() -> Self {
         Self {
-            _topology: AdjacencyList::default(),
-            nodes: RawTable::default(),
-            hash_builder: DefaultHashBuilder::default()
+            topology: AdjacencyList::default(),
+            nodes: HashSet::default(),
+            hash_builder: DefaultHashBuilder::default(),
         }
     }
 }
