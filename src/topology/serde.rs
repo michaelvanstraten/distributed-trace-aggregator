@@ -1,9 +1,7 @@
 use core::fmt;
 
-use serde::{
-    de::{MapAccess, Visitor},
-    Deserialize, Deserializer, Serialize,
-};
+use serde::de::{MapAccess, Visitor};
+use serde::{Deserialize, Deserializer, Serialize};
 
 use crate::topology::{VertexID, VertexWeight};
 

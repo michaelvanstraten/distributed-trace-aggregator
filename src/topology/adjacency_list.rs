@@ -1,10 +1,8 @@
 use std::mem;
 
-use hashbrown::{
-    hash_map::DefaultHashBuilder,
-    hash_table::{self, Iter},
-    HashTable,
-};
+use hashbrown::hash_map::DefaultHashBuilder;
+use hashbrown::hash_table::{self, Iter};
+use hashbrown::HashTable;
 
 use crate::hashbrown_utils::{equivalent_key, make_hasher};
 

@@ -1,6 +1,8 @@
+use std::hash::Hash;
+
 use hashbrown::{hash_map::DefaultHashBuilder, HashSet};
 use hashbrown_utils::make_hash;
-use std::hash::Hash;
+
 use topology::AdjacencyList;
 
 mod hashbrown_utils;
