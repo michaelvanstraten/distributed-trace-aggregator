@@ -1,4 +1,6 @@
-use hashbrown::{hash_map::DefaultHashBuilder, raw::RawTable};
+#![allow(unused)]
+
+use hashbrown::{raw::RawTable, hash_map::DefaultHashBuilder};
 use std::hash::Hash;
 use topology::{AdjacencyList, VertexID};
 
@@ -14,11 +16,7 @@ pub struct Graph<Node, H = DefaultHashBuilder> {
 
 impl<Node> Graph<Node> {
     pub fn new() -> Self {
-        Graph {
-            _topology: AdjacencyList::new(),
-            nodes: RawTable::new(),
-            hash_builder: DefaultHashBuilder::default(),
-        }
+        Self::default()
     }
 }
 
@@ -27,4 +25,14 @@ where
     Node: Hash,
 {
     pub fn add_node_relation(&mut self, from: Node, to: Node) {}
+}
+
+impl<Node> Default for Graph<Node> {
+    fn default() -> Self {
+        Self {
+            _topology: AdjacencyList::default(),
+            nodes: RawTable::default(),
+            hash_builder: DefaultHashBuilder::default()
+        }
+    }
 }

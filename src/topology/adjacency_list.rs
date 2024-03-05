@@ -6,6 +6,7 @@ use crate::hashbrown_utils::{equivalent_key, make_hasher};
 
 use super::{VertexID, WeightedVertices};
 
+#[derive(Default)]
 pub struct AdjacencyList<H = DefaultHashBuilder> {
     vertices: RawTable<(VertexID, WeightedVertices)>,
     hash_builder: H,
@@ -13,10 +14,7 @@ pub struct AdjacencyList<H = DefaultHashBuilder> {
 
 impl AdjacencyList {
     pub fn new() -> Self {
-        AdjacencyList {
-            vertices: RawTable::new(),
-            hash_builder: DefaultHashBuilder::default(),
-        }
+        Self::default()
     }
 
     pub fn insert_edge(&mut self, from: VertexID, to: VertexID) {

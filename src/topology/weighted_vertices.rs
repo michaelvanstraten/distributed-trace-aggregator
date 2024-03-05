@@ -6,6 +6,7 @@ use crate::hashbrown_utils::{equivalent_key, make_hasher};
 
 use super::{VertexID, VertexWeight};
 
+#[derive(Default)]
 pub struct WeightedVertices<H = DefaultHashBuilder> {
     hash_builder: H,
     vertices: RawTable<(VertexID, VertexWeight)>,
@@ -13,10 +14,7 @@ pub struct WeightedVertices<H = DefaultHashBuilder> {
 
 impl WeightedVertices {
     pub fn new() -> Self {
-        WeightedVertices {
-            vertices: RawTable::new(),
-            hash_builder: DefaultHashBuilder::default(),
-        }
+        Self::default()
     }
 
     pub fn set_vertex_weight(
