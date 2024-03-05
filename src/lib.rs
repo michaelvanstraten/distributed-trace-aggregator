@@ -9,26 +9,34 @@ mod hashbrown_utils;
 mod node;
 mod topology;
 
-pub struct Graph<Node, H = DefaultHashBuilder> {
+pub struct Graph<T, H = DefaultHashBuilder> {
     topology: AdjacencyList,
-    nodes: HashSet<Node>,
+    nodes: HashSet<T>,
     hash_builder: H,
 }
 
-impl<Node> Graph<Node> {
+impl<T> Graph<T> {
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl<Node> Graph<Node>
+impl<T> Graph<T>
 where
-    Node: Hash,
+    T: Hash + Eq,
 {
-    pub fn add_node_relation(&mut self, from: Node, to: Node) {}
+    pub fn add_node_relation(&mut self, from: T, to: T) {
+        self.topology.insert_edge(
+            make_hash(&self.hash_builder, &from),
+            make_hash(&self.hash_builder, &to),
+        );
+
+        self.nodes.insert(from);
+        self.nodes.insert(to);
+    }
 }
 
-impl<Node> Default for Graph<Node> {
+impl<T> Default for Graph<T> {
     fn default() -> Self {
         Self {
             topology: AdjacencyList::default(),
