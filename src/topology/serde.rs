@@ -2,7 +2,6 @@ use core::fmt;
 
 use serde::{
     de::{MapAccess, Visitor},
-    ser::SerializeMap,
     Deserialize, Deserializer, Serialize,
 };
 
@@ -40,7 +39,9 @@ impl<'de> Deserialize<'de> for AdjacencyList {
             {
                 let mut adjacency_list = AdjacencyList::default();
 
-                while let Some((vertex_id, neighbouring_vertices)) = map.next_entry::<VertexID, WeightedVertices>()? {
+                while let Some((vertex_id, neighbouring_vertices)) =
+                    map.next_entry::<VertexID, WeightedVertices>()?
+                {
                     adjacency_list.set_adjacent_vertices(vertex_id, neighbouring_vertices);
                 }
 

@@ -1,9 +1,8 @@
-use std::{hash::BuildHasherDefault, mem};
+use std::mem;
 
 use hashbrown::{
     hash_map::DefaultHashBuilder,
-    hash_table::{self, Iter, IterMut},
-    raw::RawTable,
+    hash_table::{self, Iter},
     HashTable,
 };
 

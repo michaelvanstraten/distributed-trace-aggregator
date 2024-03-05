@@ -1,12 +1,10 @@
-use std::{hash::RandomState, mem};
+use std::mem;
 
 use hashbrown::{
     hash_map::DefaultHashBuilder,
     hash_table::{self, Iter},
-    raw::RawTable,
     HashTable,
 };
-use serde::Serialize;
 
 use crate::hashbrown_utils::{equivalent_key, make_hasher};
 

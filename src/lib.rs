@@ -1,9 +1,7 @@
-#![allow(unused)]
-
-use hashbrown::{hash_map::DefaultHashBuilder, raw::RawTable, HashSet};
-use hashbrown_utils::{make_hash, make_hasher};
+use hashbrown::{hash_map::DefaultHashBuilder, HashSet};
+use hashbrown_utils::make_hash;
 use std::hash::Hash;
-use topology::{AdjacencyList, VertexID};
+use topology::AdjacencyList;
 
 mod hashbrown_utils;
 mod node;
