@@ -1,7 +1,7 @@
 use std::mem;
 
 use hashbrown::hash_map::DefaultHashBuilder;
-use hashbrown::hash_table::{self, Iter};
+use hashbrown::hash_table::{self, IntoIter, Iter};
 use hashbrown::HashTable;
 
 use crate::hashbrown_utils::{equivalent_key, make_hasher};
@@ -36,6 +36,21 @@ impl AdjacencyList {
         }
     }
 
+    pub fn get_adjecent_vertices(&self, vertex_id: VertexID) -> Option<&WeightedVertices> {
+        self.vertices
+            .find(vertex_id, equivalent_key(&vertex_id))
+            .map(|(_, weighted_vertices)| weighted_vertices)
+    }
+
+    pub fn get_adjecent_vertices_mut(
+        &mut self,
+        vertex_id: VertexID,
+    ) -> Option<&mut WeightedVertices> {
+        self.vertices
+            .find_mut(vertex_id, equivalent_key(&vertex_id))
+            .map(|(_, weighted_vertices)| weighted_vertices)
+    }
+
     pub fn set_adjacent_vertices(
         &mut self,
         vertex_id: VertexID,
@@ -68,5 +83,29 @@ impl<'a> IntoIterator for &'a AdjacencyList {
     #[cfg_attr(feature = "inline-more", inline)]
     fn into_iter(self) -> Self::IntoIter {
         self.vertices.iter().map(|item| (&item.0, &item.1))
+    }
+}
+
+impl IntoIterator for AdjacencyList {
+    type Item = (VertexID, WeightedVertices);
+    type IntoIter = IntoIter<(VertexID, WeightedVertices)>;
+
+    #[cfg_attr(feature = "inline-more", inline)]
+    fn into_iter(self) -> Self::IntoIter {
+        self.vertices.into_iter()
+    }
+}
+
+impl Extend<(VertexID, WeightedVertices)> for AdjacencyList {
+    fn extend<T: IntoIterator<Item = (VertexID, WeightedVertices)>>(&mut self, iter: T) {
+        let iterator = iter.into_iter();
+
+        iterator.for_each(|(vertex_id, other)| {
+            if let Some(neighbouring_vertices) = self.get_adjecent_vertices_mut(vertex_id) {
+                neighbouring_vertices.extend(other)
+            } else {
+                self.set_adjacent_vertices(vertex_id, other);
+            }
+        })
     }
 }

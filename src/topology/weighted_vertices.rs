@@ -1,7 +1,7 @@
 use std::mem;
 
 use hashbrown::hash_map::DefaultHashBuilder;
-use hashbrown::hash_table::{self, Iter};
+use hashbrown::hash_table::{self, IntoIter, Iter};
 use hashbrown::HashTable;
 
 use crate::hashbrown_utils::{equivalent_key, make_hasher};
@@ -70,5 +70,25 @@ impl<'a> IntoIterator for &'a WeightedVertices {
     #[cfg_attr(feature = "inline-more", inline)]
     fn into_iter(self) -> Self::IntoIter {
         self.vertices.iter().map(|item| (&item.0, &item.1))
+    }
+}
+
+impl IntoIterator for WeightedVertices {
+    type Item = (VertexID, VertexWeight);
+    type IntoIter = IntoIter<(VertexID, VertexWeight)>;
+
+    #[cfg_attr(feature = "inline-more", inline)]
+    fn into_iter(self) -> Self::IntoIter {
+        self.vertices.into_iter()
+    }
+}
+
+impl Extend<(VertexID, VertexWeight)> for WeightedVertices {
+    fn extend<T: IntoIterator<Item = (VertexID, VertexWeight)>>(&mut self, iter: T) {
+        let iterator = iter.into_iter();
+
+        iterator.for_each(|(vertex_id, vertex_weight)| {
+            self.increment_vertex_weight(vertex_id, vertex_weight)
+        });
     }
 }
